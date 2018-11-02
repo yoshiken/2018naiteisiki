@@ -12,6 +12,7 @@ s3client = boto3.resource('s3')
 photobase = 'rekognition/group'
 
 groupcount = 4
+groupname = ['あか', 'うすもも', 'オレンジ', 'うすだいだい', 'きいろ', 'きみどり', 'あお', 'ふじ', 'みず', 'むらさき', 'みどり', 'ピンク']
 
 
 @app.route('/')
@@ -26,6 +27,7 @@ def faceSearch():
     for index in range(groupcount):
         groupno = str(index + 1)
         print(groupno)
+        result[index]['groupname'] = groupname[index]
         photo = photobase + groupno + '.jpg'
         result[index]['photoname'] = './img/group' + groupno + '.jpg'
         # rekognitionのスコアを取得

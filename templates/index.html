@@ -10,7 +10,7 @@
     {% for faceDetail in faceDetails %}
       <div class="groups">
         <img src={{ url_for('static', filename=faceDetail.photoname) }} width="300" id="faceimage"><br>
-        HAPPY score is {{ faceDetail.avgscore }}<br>
+         {{ faceDetail.groupname }} teams HAPPY score is {{ faceDetail.avgscore }}<br>
       </div>
     {% endfor %}
   </div>
