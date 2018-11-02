@@ -9,7 +9,7 @@
   <div class="container">
     {% for faceDetail in faceDetails %}
       <div class="groups">
-        <canvas id="c{{ loop.index }}" width={{ faceDetail.imgmeta.width }} height=600></canvas>
+        <canvas id="c{{ loop.index }}" width={{ faceDetail.imgmeta.w }} height={{ resizeSizeHeight }}></canvas>
         <script type="text/javascript">
             function draw{{ loop.index }}() {
               var canvas = document.getElementById('c{{ loop.index }}');
@@ -21,9 +21,13 @@
               var img = new Image();
 
               img.src = "{{ url_for('static', filename=faceDetail.photoname) }} ";
-
+              var bbObj = {{ faceDetail.BoundingBox[0]|safe }};
+              var imgData = {{ faceDetail.imgmeta|safe }};
               img.onload = function onImageLoad{{ loop.index }}() {
                 context.drawImage(img, 0,0);
+                var res = convertBoundingboxToPx(bbObj, imgData);
+  writeSquare('c{{ loop.index }}', res);
+                writeSquare('c{{ loop.index }}', res);
               }
             }
         </script>
@@ -45,6 +49,35 @@
       draw{{ loop.index }}()
     {% endfor %}
   };
+
+  // BoundingBoxをpx情報に変換
+  // 引数とかは上見ればおｋ
+  // BoundingBoxのキーが大文字なのキモくね？
+  function convertBoundingboxToPx(bbObj, imgData) {
+  	return {
+      "Height": imgData.h / 100 * Math.round(bbObj.Height * 100 * 10) / 10,
+      "Left": imgData.w / 100 * Math.round(bbObj.Left * 100 * 10) / 10,
+      "Top": imgData.h / 100 * Math.round(bbObj.Top * 100 * 10) / 10,
+      "Width": imgData.w / 100 * Math.round(bbObj.Width * 100 * 10) / 10,
+      "getLeft": function() { return this.Left; },
+      "getRight": function() { return this.Left + this.Width; },
+      "getTop": function() { return this.Top; },
+      "getBottom": function() { return this.Top + this.Height; }
+      }
+  }
+
+  function writeSquare(id, dat) {
+    var ctx = document.getElementById(id).getContext('2d');
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(dat.getLeft(), dat.getTop());
+    ctx.lineTo(dat.getRight(), dat.getTop());
+    ctx.lineTo(dat.getRight(), dat.getBottom());
+    ctx.lineTo(dat.getLeft(), dat.getBottom());
+    ctx.closePath();
+    ctx.stroke();
+  }
   </script>
   <script src="{{ url_for('static', filename='./js/particles.js') }}"></script>
   <script src="{{ url_for('static', filename='./js/particlesconfig.js') }}"></script>

@@ -13,14 +13,14 @@ photobase = 'rekognition/group'
 
 groupcount = 4
 groupname = ['1班', '2班', '3班', '4班', '5班', '6班', '7班', '8班', '9班', '10班', '11班', '12班']
-resizesize = 600
+resizeSizeHeight = 600
 
 
 @app.route('/')
 def index():
     gets3img()
     faceDetails = faceSearch()
-    return render_template('index.html', faceDetails=faceDetails)
+    return render_template('index.html', faceDetails=faceDetails, resizeSizeHeight=resizeSizeHeight)
 
 
 def faceSearch():
@@ -51,7 +51,7 @@ def faceSearch():
 
         # 顔ごとのループ処理
         for indextmp, faceDetail in enumerate(response['FaceDetails']):
-            result[index]['BoundingBox'][indextmp] = json.dumps(faceDetail['BoundingBox'])
+            result[index]['BoundingBox'][indextmp] = faceDetail['BoundingBox']
             # print(json.dumps(faceDetail, indent=4, sort_keys=True))
             hoge = faceDetail['Emotions']
 
@@ -81,7 +81,7 @@ def gets3img():
 def resizeimg(groupno):
     img = cv2.imread('static/img/group' + groupno + '.jpg')
     h, w, _ = img.shape
-    aspectratio = 600 / h
+    aspectratio = resizeSizeHeight / h
     img = cv2.resize(img, dsize=None, fx=aspectratio, fy=aspectratio)
     cv2.imwrite('static/img/group' + groupno + 'resize.jpg', img)
 
@@ -89,7 +89,7 @@ def resizeimg(groupno):
 def imgmeteinfo(imgname):
     im = cv2.imread('static/img/group' + imgname)
     h, w, _ = im.shape
-    return {'width': w, 'height': h}
+    return {'w': w, 'h': h}
 
 
 if __name__ == '__main__':
