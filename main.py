@@ -11,6 +11,8 @@ faceclient = boto3.client('rekognition')
 s3client = boto3.resource('s3')
 photobase = 'rekognition/group'
 
+groupcount = 4
+
 
 @app.route('/')
 def index():
@@ -20,8 +22,8 @@ def index():
 
 
 def faceSearch():
-    result = [{} for i in range(4)]
-    for index in range(4):
+    result = [{} for i in range(groupcount)]
+    for index in range(groupcount):
         groupno = str(index + 1)
         print(groupno)
         photo = photobase + groupno + '.jpg'
@@ -50,7 +52,7 @@ def faceSearch():
 
 def gets3img():
     bucketimg = s3client.Bucket(bucket)
-    for groupno in range(1, 5):
+    for groupno in range(1, groupcount+1):
         photo = photobase + str(groupno) + '.jpg'
         print(photo)
         photodownloaddir = 'static/img/group' + str(groupno) + '.jpg'
