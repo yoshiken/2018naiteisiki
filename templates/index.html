@@ -3,13 +3,31 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='./css/layout.css') }}">
 </head>
-<body>
+<body onload="draw()">
   <div id="particles-js"></div>
   <br>
   <div class="container">
     {% for faceDetail in faceDetails %}
       <div class="groups">
-        <img src={{ url_for('static', filename=faceDetail.photoname) }} width="300" id="faceimage"><br>
+        <canvas id="c1" width={{ faceDetail.imgmeta.width }} height=600></canvas>
+        <script type="text/javascript">
+            function draw() {
+              var canvas = document.getElementById('c1');
+
+              if (!canvas || !canvas.getContext) {
+                return false;
+              }
+              var context = canvas.getContext('2d');
+              var img = new Image();
+
+              img.src = "{{ url_for('static', filename=faceDetail.photoname) }} ";
+
+              img.onload = function onImageLoad() {
+                context.drawImage(img, 0,0);
+              }
+            }
+        </script>
+        <br>
          {{ faceDetail.groupname }} teams HAPPY score is {{ faceDetail.avgscore }}<br>
       </div>
     {% endfor %}

@@ -13,6 +13,7 @@ photobase = 'rekognition/group'
 
 groupcount = 4
 groupname = ['1班', '2班', '3班', '4班', '5班', '6班', '7班', '8班', '9班', '10班', '11班', '12班']
+resizesize = 600
 
 
 @app.route('/')
@@ -36,13 +37,13 @@ def faceSearch():
 
         # この時点で決まっている結果を代入
         result[index]['groupname'] = groupname[index]
-        result[index]['photoname'] = './img/group' + groupno + '.jpg'
+        result[index]['photoname'] = './img/group' + groupno + 'resize.jpg'
 
-        print(groupno)
+        #print(groupno)
 
         # rekognitionのスコアを取得
         response = faceclient.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': photo}}, Attributes=['ALL'])
-        # print(json.dumps(response, indent=4, sort_keys=True))
+        print(json.dumps(response, indent=4, sort_keys=True))
 
         # rekognitionのスコアで動的に変わる変数
         humancount = len(response['FaceDetails'])
@@ -57,7 +58,6 @@ def faceSearch():
             # 幸福度を取得
             for emotion in hoge:
                 if emotion['Type'] == 'HAPPY':
-                    print(emotion['Confidence'])
                     scores += [emotion['Confidence']]
 
         # すべての顔の幸福度の平均を算出
@@ -65,7 +65,7 @@ def faceSearch():
             totalscore += score
         result[index]['avgscore'] = round(totalscore / len(scores), 5)
 
-        result[index]['imgmeta'] = imgmeteinfo(groupno + '.jpg')
+        result[index]['imgmeta'] = imgmeteinfo(groupno + 'resize.jpg')
     return result
 
 
@@ -73,14 +73,21 @@ def gets3img():
     bucketimg = s3client.Bucket(bucket)
     for groupno in range(1, groupcount+1):
         photo = photobase + str(groupno) + '.jpg'
-        print(photo)
         photodownloaddir = 'static/img/group' + str(groupno) + '.jpg'
         bucketimg.download_file(photo, photodownloaddir)
+        resizeimg(str(groupno))
+
+
+def resizeimg(groupno):
+    img = cv2.imread('static/img/group' + groupno + '.jpg')
+    h, w, _ = img.shape
+    aspectratio = 600 / h
+    img = cv2.resize(img, dsize=None, fx=aspectratio, fy=aspectratio)
+    cv2.imwrite('static/img/group' + groupno + 'resize.jpg', img)
 
 
 def imgmeteinfo(imgname):
     im = cv2.imread('static/img/group' + imgname)
-    print(im.shape)
     h, w, _ = im.shape
     return {'width': w, 'height': h}
 

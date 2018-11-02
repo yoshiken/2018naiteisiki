@@ -15,11 +15,6 @@ z-index: 0;
   justify-content: space-between;
 }
 
-#faceimage {
-  height:400px;
-  object-fit: contain;
-}
-
 body {
  background: #000;
  color: #fff;
