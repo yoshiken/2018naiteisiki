@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='./css/layout.css') }}">
+</head>
+<body>
+  <div id="particles-js"></div>
+  <br>
+  <div class="container">
+    {% for faceDetail in faceDetails %}
+      <div class="groups">
+        <img src={{ url_for('static', filename=faceDetail.photoname) }} width="300" id="faceimage"><br>
+        HAPPY score is {{ faceDetail.avgscore }}<br>
+      </div>
+    {% endfor %}
+  </div>
+  <script src="{{ url_for('static', filename='./js/particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='./js/particlesconfig.js') }}"></script>
+</body>
