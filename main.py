@@ -12,7 +12,7 @@ s3client = boto3.resource('s3')
 photobase = 'rekognition/group'
 
 groupcount = 4
-groupname = ['あか', 'うすもも', 'オレンジ', 'うすだいだい', 'きいろ', 'きみどり', 'あお', 'ふじ', 'みず', 'むらさき', 'みどり', 'ピンク']
+groupname = ['1班', '2班', '3班', '4班', '5班', '6班', '7班', '8班', '9班', '10班', '11班', '12班']
 
 
 @app.route('/')
@@ -75,8 +75,10 @@ def gets3img():
         print(photo)
         photodownloaddir = 'static/img/group' + str(groupno) + '.jpg'
         bucketimg.download_file(photo, photodownloaddir)
-        # im = cv2.imread('static/img/df5d37.jpg')
-        # h, w, _ = im.shape
+        im = cv2.imread(photodownloaddir)
+        h, w, _ = im.shape
+        print(h)
+        print(w)
 
 
 if __name__ == '__main__':
