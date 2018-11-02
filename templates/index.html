@@ -27,6 +27,12 @@
               }
             }
         </script>
+        <script type="text/javascript">
+          function test_func(data) {
+              console.log(data);
+          }
+          test_func({{ faceDetail.imgmeta|safe }})
+        </script>
         <br>
          {{ faceDetail.groupname }} teams HAPPY score is {{ faceDetail.avgscore }}<br>
       </div>
