@@ -34,7 +34,8 @@ def faceSearch():
         # 使う変数初期化
         scores = []
         totalscore = 0
-        result[index]['BoundingBox'] = [[]for l in range(len(response['FaceDetails']))]
+        humancount = len(response['FaceDetails'])
+        result[index]['BoundingBox'] = [[]for l in range(humancount)]
         # print(json.dumps(response, indent=4, sort_keys=True))
         for indextmp, faceDetail in enumerate(response['FaceDetails']):
             result[index]['BoundingBox'][indextmp] = faceDetail['BoundingBox']
@@ -46,7 +47,7 @@ def faceSearch():
                     scores += [emotion['Confidence']]
         for score in scores:
             totalscore += score
-        result[index]['avgscore'] = round(totalscore / len(scores),5)
+        result[index]['avgscore'] = round(totalscore / len(scores), 5)
     return result
 
 
