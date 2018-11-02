@@ -48,10 +48,14 @@ def faceSearch():
         # rekognitionのスコアで動的に変わる変数
         humancount = len(response['FaceDetails'])
         result[index]['BoundingBox'] = [[]for l in range(humancount)]
+        result[index]['Landmark'] = []
 
         # 顔ごとのループ処理
         for indextmp, faceDetail in enumerate(response['FaceDetails']):
             result[index]['BoundingBox'][indextmp] = faceDetail['BoundingBox']
+            result[index]['Landmark'].extend(faceDetail['Landmarks'])
+
+
             # print(json.dumps(faceDetail, indent=4, sort_keys=True))
             hoge = faceDetail['Emotions']
 

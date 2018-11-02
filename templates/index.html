@@ -21,13 +21,20 @@
               var img = new Image();
 
               img.src = "{{ url_for('static', filename=faceDetail.photoname) }} ";
+
               var bbObjs = {{ faceDetail.BoundingBox|safe }};
               var imgData = {{ faceDetail.imgmeta|safe }};
+              var lmObjs = {{ faceDetail.Landmark|safe }};
+
               img.onload = function onImageLoad{{ loop.index }}() {
                 context.drawImage(img, 0,0);
                 //var res = convertBoundingboxToPx(bbObjAry, imgData);
                 var res = bbObjs.map(dat => convertBoundingboxToPx(dat, imgData));
                 writeSquares('c{{ loop.index }}', res);
+
+                // Landmark対応
+                var res2 = lmObjs.map(dat => convertLandmarksToPx(dat, imgData));
+                writeDots('c{{ loop.index }}', res2);
               }
             }
         </script>
@@ -36,8 +43,7 @@
               console.log(data);
               console.log(typeof　data);
           }
-          test_func({{ faceDetail.imgmeta|safe }})
-          test_func({{ faceDetail.BoundingBox|safe }})
+          test_func({{ faceDetail.Landmark|safe }})
         </script>
         <br>
          {{ faceDetail.groupname }} teams HAPPY score is {{ faceDetail.avgscore }}<br>
@@ -81,6 +87,28 @@
       ctx.lineTo(dat.getLeft(), dat.getBottom());
       ctx.closePath();
       ctx.stroke();
+    }
+
+    function convertLandmarksToPx(lmObj, imgData) {
+    	return {
+        "X": imgData.w / 100 * Math.round(lmObj.X * 100 * 10) / 10,
+        "Y": imgData.h / 100 * Math.round(lmObj.Y * 100 * 10) / 10,
+        "getX": function() { return this.X; },
+        "getY": function() { return this.Y; },
+        }
+    }
+
+    function writeDots(id, dats) {
+      dats.forEach(dat => writeDot(id, dat));
+    }
+
+    function writeDot(id, dat) {
+      console.log(dat);
+      var ctx = document.getElementById(id).getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+    	ctx.arc(dat.getX(), dat.getY(), 2, 0, Math.PI*2);
+      ctx.fill();
     }
   </script>
   <script src="{{ url_for('static', filename='./js/particles.js') }}"></script>
