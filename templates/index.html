@@ -3,16 +3,16 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='./css/layout.css') }}">
 </head>
-<body onload="draw()">
+<body>
   <div id="particles-js"></div>
   <br>
   <div class="container">
     {% for faceDetail in faceDetails %}
       <div class="groups">
-        <canvas id="c1" width={{ faceDetail.imgmeta.width }} height=600></canvas>
+        <canvas id="c{{ loop.index }}" width={{ faceDetail.imgmeta.width }} height=600></canvas>
         <script type="text/javascript">
-            function draw() {
-              var canvas = document.getElementById('c1');
+            function draw{{ loop.index }}() {
+              var canvas = document.getElementById('c{{ loop.index }}');
 
               if (!canvas || !canvas.getContext) {
                 return false;
@@ -22,7 +22,7 @@
 
               img.src = "{{ url_for('static', filename=faceDetail.photoname) }} ";
 
-              img.onload = function onImageLoad() {
+              img.onload = function onImageLoad{{ loop.index }}() {
                 context.drawImage(img, 0,0);
               }
             }
@@ -38,6 +38,13 @@
       </div>
     {% endfor %}
   </div>
+  <script type="text/javascript">
+  window.onload = function () {
+    {% for faceDetail in faceDetails %}
+      draw{{ loop.index }}()
+    {% endfor %}
+  };
+  </script>
   <script src="{{ url_for('static', filename='./js/particles.js') }}"></script>
   <script src="{{ url_for('static', filename='./js/particlesconfig.js') }}"></script>
 </body>
