@@ -24,32 +24,47 @@ def index():
 
 def faceSearch():
     result = [{} for i in range(groupcount)]
+
+    # チームごとのループ処理
     for index in range(groupcount):
-        groupno = str(index + 1)
-        print(groupno)
-        result[index]['groupname'] = groupname[index]
-        photo = photobase + groupno + '.jpg'
-        result[index]['photoname'] = './img/group' + groupno + '.jpg'
-        # rekognitionのスコアを取得
-        response = faceclient.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': photo}}, Attributes=['ALL'])
 
         # 使う変数初期化
         scores = []
         totalscore = 0
+        groupno = str(index + 1)
+        photo = photobase + groupno + '.jpg'
+
+        # この時点で決まっている結果を代入
+        result[index]['groupname'] = groupname[index]
+        result[index]['photoname'] = './img/group' + groupno + '.jpg'
+        # print(json.dumps(response, indent=4, sort_keys=True))
+
+        print(groupno)
+
+        # rekognitionのスコアを取得
+        response = faceclient.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': photo}}, Attributes=['ALL'])
+
+        # rekognitionのスコアで動的に変わる変数
         humancount = len(response['FaceDetails'])
         result[index]['BoundingBox'] = [[]for l in range(humancount)]
-        # print(json.dumps(response, indent=4, sort_keys=True))
+
+        # 顔ごとのループ処理
         for indextmp, faceDetail in enumerate(response['FaceDetails']):
             result[index]['BoundingBox'][indextmp] = faceDetail['BoundingBox']
             # print(json.dumps(faceDetail, indent=4, sort_keys=True))
             hoge = faceDetail['Emotions']
+
+            # 幸福度を取得
             for emotion in hoge:
                 if emotion['Type'] == 'HAPPY':
                     print(emotion['Confidence'])
                     scores += [emotion['Confidence']]
+
+        # すべての顔の幸福度の平均を算出
         for score in scores:
             totalscore += score
         result[index]['avgscore'] = round(totalscore / len(scores), 5)
+
     return result
 
 
@@ -62,6 +77,7 @@ def gets3img():
         bucketimg.download_file(photo, photodownloaddir)
         # im = cv2.imread('static/img/df5d37.jpg')
         # h, w, _ = im.shape
+
 
 if __name__ == '__main__':
     app.run()
