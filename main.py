@@ -51,7 +51,7 @@ def faceSearch():
 
         # 顔ごとのループ処理
         for indextmp, faceDetail in enumerate(response['FaceDetails']):
-            result[index]['BoundingBox'][indextmp] = faceDetail['BoundingBox']
+            result[index]['BoundingBox'][indextmp] = json.dumps(faceDetail['BoundingBox'])
             # print(json.dumps(faceDetail, indent=4, sort_keys=True))
             hoge = faceDetail['Emotions']
 

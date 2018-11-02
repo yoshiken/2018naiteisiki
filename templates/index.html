@@ -32,6 +32,7 @@
               console.log(data);
           }
           test_func({{ faceDetail.imgmeta|safe }})
+          test_func({{ faceDetail.BoundingBox|safe }})
         </script>
         <br>
          {{ faceDetail.groupname }} teams HAPPY score is {{ faceDetail.avgscore }}<br>
