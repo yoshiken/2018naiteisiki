@@ -37,12 +37,12 @@ def faceSearch():
         # この時点で決まっている結果を代入
         result[index]['groupname'] = groupname[index]
         result[index]['photoname'] = './img/group' + groupno + '.jpg'
-        # print(json.dumps(response, indent=4, sort_keys=True))
 
         print(groupno)
 
         # rekognitionのスコアを取得
         response = faceclient.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': photo}}, Attributes=['ALL'])
+        # print(json.dumps(response, indent=4, sort_keys=True))
 
         # rekognitionのスコアで動的に変わる変数
         humancount = len(response['FaceDetails'])
@@ -65,6 +65,7 @@ def faceSearch():
             totalscore += score
         result[index]['avgscore'] = round(totalscore / len(scores), 5)
 
+        result[index]['imgmeta'] = imgmeteinfo(groupno + '.jpg')
     return result
 
 
@@ -75,10 +76,13 @@ def gets3img():
         print(photo)
         photodownloaddir = 'static/img/group' + str(groupno) + '.jpg'
         bucketimg.download_file(photo, photodownloaddir)
-        im = cv2.imread(photodownloaddir)
-        h, w, _ = im.shape
-        print(h)
-        print(w)
+
+
+def imgmeteinfo(imgname):
+    im = cv2.imread('static/img/group' + imgname)
+    print(im.shape)
+    h, w, _ = im.shape
+    return {'width': w, 'height': h}
 
 
 if __name__ == '__main__':
