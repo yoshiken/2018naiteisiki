@@ -14,7 +14,7 @@ opencv-python==3.4.3.18
 pyasn1==0.4.4
 python-dateutil==2.7.5
 PyYAML==5.1
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.1.13
 six==1.11.0
 urllib3==1.24.2
